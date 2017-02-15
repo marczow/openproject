@@ -118,7 +118,13 @@ describe 'api/v2/planning_elements/index.api.rabl', type: :view do
     end
 
     it 'should render custom field values' do
-      expect(rendered).to be_json_eql('MySQL'.to_json).at_path("planning_elements/0/cf_#{custom_field.id}")
+      # technically the value should be the translated value (i.e. 'MySQL')
+      # but the view renders the raw value which is fine as it gets
+      # overriden with the typed value in this case within the
+      # planning_elements_controller.
+      value = custom_field.custom_options.first.id
+
+      expect(rendered).to be_json_eql("#{value}".to_json).at_path("planning_elements/0/cf_#{custom_field.id}")
       expect(rendered).to have_json_path('planning_elements/1')
       expect(rendered).not_to have_json_path("planning_elements/1/cf_#{custom_field.id}")
     end

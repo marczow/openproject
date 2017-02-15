@@ -106,7 +106,7 @@ class CustomFieldsController < ApplicationController
 
   def set_custom_options!
     if @custom_field.list?
-      params["custom_field"]["custom_options"].each_with_index do |(id, attr), i|
+      Hash(params.to_h.dig("custom_field", "custom_options")).each_with_index do |(id, attr), i|
         attr = attr.slice(:value, :default_value)
 
         if @custom_field.new_record? || !CustomOption.exists?(id)

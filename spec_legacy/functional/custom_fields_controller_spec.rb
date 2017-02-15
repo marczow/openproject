@@ -27,7 +27,7 @@
 # See doc/COPYRIGHT.rdoc for more details.
 #++
 
-require 'legacy_spec_helper'
+require_relative '../legacy_spec_helper'
 require 'custom_fields_controller'
 
 describe CustomFieldsController, type: :controller do
@@ -83,7 +83,7 @@ describe CustomFieldsController, type: :controller do
     assert_redirected_to '/custom_fields?tab=WorkPackageCustomField'
     field = WorkPackageCustomField.find_by(name: 'test_post_new_list')
     refute_nil field
-    assert_equal ['0.1', '0.2'], field.possible_values
+    assert_equal ['0.1', '0.2'], field.possible_values.map(&:value)
     assert_equal 1, field.types.size
   end
 end

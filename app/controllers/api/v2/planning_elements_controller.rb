@@ -222,8 +222,15 @@ module Api
         struct
       end
 
+      ##
+      # Returns the value of this custom field as needed by the APIv2.
+      # For instance it expects the raw value for user custom fields to
+      # use it (the ID) to lookup the user.
+      #
+      # On the other hand for list custom fields it can't do the lookup
+      # (there is no custom options API) and besides it shouldn't.
       def value_for_frontend(custom_value)
-        if custom_value.custom_field.field_format == "list"
+        if custom_value.custom_field.list?
           custom_value.typed_value
         else
           custom_value.value

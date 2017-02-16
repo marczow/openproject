@@ -94,7 +94,7 @@ class CustomFieldFormBuilder < TabularFormBuilder
     select_options = { no_label: true }
 
     if is_required && default_value.blank?
-      select_options[:prompt] = "--- #{t(:actionview_instancetag_blank_option)} ---"
+      select_options[:prompt] = "--- #{I18n.t(:actionview_instancetag_blank_option)} ---"
     elsif !is_required
       select_options[:include_blank] = true
     end

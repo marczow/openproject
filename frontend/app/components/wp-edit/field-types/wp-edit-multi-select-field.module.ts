@@ -67,9 +67,9 @@ export class MultiSelectEditField extends EditField {
     }
   }
 
-  private setValues(availableValues, sortValuesByName = false) {
+  private setValues(availableValues:any[], sortValuesByName:boolean = false) {
     if (sortValuesByName) {
-      availableValues.sort(function(a, b) {
+      availableValues.sort(function(a:any, b:any) {
         var nameA = a.name.toLowerCase();
         var nameB = b.name.toLowerCase();
         return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;

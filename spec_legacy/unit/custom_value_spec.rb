@@ -26,7 +26,7 @@
 #
 # See doc/COPYRIGHT.rdoc for more details.
 #++
-require 'legacy_spec_helper'
+require_relative '../legacy_spec_helper'
 
 describe CustomValue, type: :model do
   it 'should string field validation with blank value' do
@@ -77,6 +77,16 @@ describe CustomValue, type: :model do
     assert v.valid?
   end
 
+  it 'should list field validation' do
+    f = CustomField.create(field_format: 'list', possible_values: ['value1', 'value2'])
+    v = CustomValue.new(custom_field: f, value: '')
+    assert v.valid?
+    v.value = 'abc'
+    assert !v.valid?
+    v.value = f.custom_options.first.id
+    assert v.valid?
+  end
+
   it 'should int field validation' do
     f = CustomField.new(field_format: 'int')
     v = CustomValue.new(custom_field: f, value: '')
@@ -106,21 +116,6 @@ describe CustomValue, type: :model do
     assert v.save
     v.value = '6a'
     assert !v.save
-  end
-
-  it 'should default value' do
-    custom_field = FactoryGirl.create :issue_custom_field,
-                                      field_format: 'string',
-                                      default_value: 'Some Default String'
-
-    field = CustomField.find_by(default_value: 'Some Default String')
-    assert_equal field, custom_field
-
-    v = CustomValue.new(custom_field: field)
-    assert_equal 'Some Default String', v.value
-
-    v = CustomValue.new(custom_field: field, value: 'Not empty')
-    assert_equal 'Not empty', v.value
   end
 
   it 'should sti polymorphic association' do

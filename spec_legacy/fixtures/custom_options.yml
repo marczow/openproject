@@ -1,4 +1,3 @@
-#-- encoding: UTF-8
 #-- copyright
 # OpenProject is a project management system.
 # Copyright (C) 2012-2017 the OpenProject Foundation (OPF)
@@ -26,34 +25,47 @@
 #
 # See doc/COPYRIGHT.rdoc for more details.
 #++
-require_relative '../legacy_spec_helper'
 
-describe CustomField, type: :model do
-  it 'should create' do
-    field = UserCustomField.new(name: 'Money money money', field_format: 'float')
-    assert field.save
-  end
-
-  it 'should possible values should accept an array' do
-    field = CustomField.new field_format: "list"
-    field.possible_values = ['One value', '']
-    assert_equal ['One value'], field.possible_values.map(&:value)
-  end
-
-  it 'should possible values should accept a string' do
-    field = CustomField.new field_format: "list"
-    field.possible_values = 'One value'
-    assert_equal ['One value'], field.possible_values.map(&:value)
-  end
-
-  it 'should possible values should accept a multiline string' do
-    field = CustomField.new field_format: "list"
-    field.possible_values = "One value\nAnd another one  \r\n \n"
-    assert_equal ['One value', 'And another one'], field.possible_values.map(&:value)
-  end
-
-  it 'should destroy' do
-    field = FactoryGirl.create :custom_field
-    assert field.destroy
-  end
-end
+---
+custom_option_001:
+  id: 1
+  custom_field_id: 1
+  position: 1
+  value: MySQL
+  default_value: false
+custom_option_002:
+  id: 2
+  custom_field_id: 1
+  position: 2
+  value: PostgreSQL
+  default_value: false
+custom_option_003:
+  id: 3
+  custom_field_id: 1
+  position: 3
+  value: Oracle
+  default_value: false
+custom_option_004:
+  id: 4
+  custom_field_id: 3
+  position: 1
+  value: Stable
+  default_value: false
+custom_option_005:
+  id: 5
+  custom_field_id: 3
+  position: 2
+  value: Beta
+  default_value: false
+custom_option_006:
+  id: 6
+  custom_field_id: 3
+  position: 3
+  value: Alpha
+  default_value: false
+custom_option_007:
+  id: 7
+  custom_field_id: 3
+  position: 4
+  value: Planning
+  default_value: false

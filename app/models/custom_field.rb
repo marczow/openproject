@@ -156,7 +156,7 @@ class CustomField < ActiveRecord::Base
     when 'user', 'version'
       possible_values_options(obj).map(&:last)
     when 'list'
-      custom_options.order(position: :asc)
+      custom_options
     else
       options = obj.nil? ? {} : obj
       read_attribute(:possible_values, options)
@@ -246,9 +246,9 @@ class CustomField < ActiveRecord::Base
 
   def possible_values_from_arg(arg)
     if arg.is_a?(Array)
-      arg.compact.map(&:strip).select { |v| !v.blank? }
+      arg.compact.map(&:strip).reject(&:blank?)
     else
-      arg.to_s.split(/[\n\r]+/)
+      arg.to_s.split(/[\n\r]+/).map(&:strip).reject(&:blank?)
     end
   end
 

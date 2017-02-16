@@ -74,13 +74,16 @@ class AddCustomOptions < ActiveRecord::Migration[5.0]
 
   def initialize_custom_options!
     list_custom_fields.each do |custom_field|
-      translations = custom_field_translations[custom_field.id] =
-        OldTranslationModel
-          .where(custom_field_id: custom_field.id)
-          .order(id: :asc)
+      translations = custom_field_translations[custom_field.id] = get_translations custom_field
 
       create_custom_options_for_translations! translations
     end
+  end
+
+  def get_translations(custom_field)
+    OldTranslationModel
+      .where(custom_field_id: custom_field.id)
+      .order(id: :asc)
   end
 
   def create_custom_options_for_translations!(translations)

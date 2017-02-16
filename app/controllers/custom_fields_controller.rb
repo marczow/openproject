@@ -91,7 +91,7 @@ class CustomFieldsController < ApplicationController
     custom_option = CustomOption.find params[:option_id]
 
     if custom_option
-      num_deleted = CustomValue.where(custom_field_id: custom_option.custom_field_id, value: custom_option.id).delete_all
+      num_deleted = delete_custom_values! custom_option
       custom_option.destroy!
 
       flash[:notice] = I18n.t(
@@ -106,22 +106,42 @@ class CustomFieldsController < ApplicationController
 
   private
 
+  def delete_custom_values!(custom_option)
+    CustomValue
+      .where(custom_field_id: custom_option.custom_field_id, value: custom_option.id)
+      .delete_all
+  end
+
   def set_custom_options!
     if @custom_field.list?
       Hash(params.to_h.dig("custom_field", "custom_options")).each_with_index do |(id, attr), i|
-        attr = attr.slice(:value, :default_value)
-
-        if @custom_field.new_record? || !CustomOption.exists?(id)
-          @custom_field.custom_options.build value: attr[:value], position: i + 1, default_value: attr[:default_value]
-        else
-          @custom_field.custom_options.select { |co| co.id == id.to_i }.each do |custom_option|
-            custom_option.value = attr[:value] if custom_option.value != attr[:value]
-            custom_option.default_value = attr[:default_value].present?
-            custom_option.position = i + 1
-            custom_option.save!
-          end
-        end
+        set_custom_option! id, attr, i
       end
+    end
+  end
+
+  def set_custom_option!(id, attr, i)
+    attr = attr.slice(:value, :default_value)
+
+    if @custom_field.new_record? || !CustomOption.exists?(id)
+      build_custom_option! attr, i
+    else
+      update_custom_option! id, attr, i
+    end
+  end
+
+  def build_custom_option!(attr, i)
+    @custom_field.custom_options.build(
+      value: attr[:value], position: i + 1, default_value: attr[:default_value]
+    )
+  end
+
+  def update_custom_option!(id, attr, i)
+    @custom_field.custom_options.select { |co| co.id == id.to_i }.each do |custom_option|
+      custom_option.value = attr[:value] if custom_option.value != attr[:value]
+      custom_option.default_value = attr[:default_value].present?
+      custom_option.position = i + 1
+      custom_option.save!
     end
   end
 

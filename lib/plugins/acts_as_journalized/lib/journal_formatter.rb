@@ -105,20 +105,24 @@ module JournalFormatter
     # Some attributes on a model are named dynamically.
     # This is especially true for associations created by plugins.
     # Those are sometimes named according to the schema "association_name[n]" or
-    #{ }"association_name_[n]" where n is an integer representing an id.
+    # "association_name_[n]" where n is an integer representing an id.
     # Using regexp we are able to handle those fields with the rest.
     formatter_type = data.class.to_s.to_sym
-    formatter = JournalFormatter
+    formatter = lookup_formatter formatter_key, formatter_type
+
+    formatter_instances[formatter] unless formatter.nil?
+  end
+
+  def lookup_formatter(formatter_key, formatter_type)
+    JournalFormatter
       .registered_fields[formatter_type].keys
       .detect { |k| formatter_key.match(k) }
+  end
 
-    return nil if formatter.nil?
-
+  def formatter_instances
     @formatter_instances ||= Hash.new do |hash, key|
       f = JournalFormatter.formatters[JournalFormatter.registered_fields[formatter_type][key]]
       hash[key] = f.new(self)
     end
-
-    @formatter_instances[formatter]
   end
 end

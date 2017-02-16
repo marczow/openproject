@@ -47,14 +47,14 @@ module API
 
         property :name,
                  exec_context: :decorator,
-                 getter: -> (*) { values.reverse.last || '' }
+                 getter: ->(*) { values.reverse.last || '' }
 
         property :value,
                  exec_context: :decorator,
                  # empty values sometimes get passed as nil. Thus we make sure that we will always
                  # display an empty string
                  # (nil values are not supported by a string_objects URL anyway)
-                 getter: -> (*) { values.last || '' }
+                 getter: ->(*) { values.last || '' }
 
         private
 

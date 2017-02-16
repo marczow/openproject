@@ -46,7 +46,10 @@ describe 'api/v2/planning_elements/index.api.rabl', type: :view do
   end
 
   describe 'with 3 planning elements available' do
-    let(:project) { FactoryGirl.build(:project_with_types, name: 'Sample Project', identifier: 'sample_project') }
+    let(:project) do
+      FactoryGirl.build(:project_with_types, name: 'Sample Project', identifier: 'sample_project')
+    end
+
     let(:wp1) { FactoryGirl.build(:work_package, subject: 'Subject #1', project: project) }
     let(:wp2) { FactoryGirl.build(:work_package, subject: 'Subject #2', project: project) }
     let(:wp3) { FactoryGirl.build(:work_package, subject: 'Subject #3', project: project) }
@@ -78,11 +81,13 @@ describe 'api/v2/planning_elements/index.api.rabl', type: :view do
     end
 
     it 'should render a status-id' do
-      expect(rendered).to be_json_eql(wp1.status.id.to_json).at_path('planning_elements/0/status_id')
+      expect(rendered)
+        .to be_json_eql(wp1.status.id.to_json)
+        .at_path('planning_elements/0/status_id')
     end
 
     it 'should render a project-id' do
-      is_expected.to be_json_eql(project.id.to_json).at_path(('planning_elements/0/project_id'))
+      is_expected.to be_json_eql(project.id.to_json).at_path('planning_elements/0/project_id')
     end
   end
 
@@ -95,7 +100,10 @@ describe 'api/v2/planning_elements/index.api.rabl', type: :view do
                          is_for_all: true)
     }
 
-    let(:project) { FactoryGirl.build(:project_with_types, name: 'Sample Project', identifier: 'sample_project') }
+    let(:project) do
+      FactoryGirl.build(:project_with_types, name: 'Sample Project', identifier: 'sample_project')
+    end
+
     let(:wp1) { FactoryGirl.build(:work_package, subject: 'Subject #1', project: project) }
     let(:wp2) { FactoryGirl.build(:work_package, subject: 'Subject #2', project: project) }
 
@@ -124,7 +132,9 @@ describe 'api/v2/planning_elements/index.api.rabl', type: :view do
       # planning_elements_controller.
       value = custom_field.custom_options.first.id
 
-      expect(rendered).to be_json_eql("#{value}".to_json).at_path("planning_elements/0/cf_#{custom_field.id}")
+      expect(rendered)
+        .to be_json_eql(value.to_s.to_json)
+        .at_path("planning_elements/0/cf_#{custom_field.id}")
       expect(rendered).to have_json_path('planning_elements/1')
       expect(rendered).not_to have_json_path("planning_elements/1/cf_#{custom_field.id}")
     end

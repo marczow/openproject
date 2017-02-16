@@ -48,8 +48,8 @@ module API
           end
 
           ##
-          # Since the block returned by .new above is `instance_exec`'d some place else we need to refer
-          # to this module in order to be able to split up the logic into methods.
+          # Since the block returned by .new above is `instance_exec`'d some place else we need to
+          # refer to this module in order to be able to split up the logic into methods.
           module Methods
             extend API::V3::Utilities::PathHelper
 
@@ -63,7 +63,7 @@ module API
 
                   {
                     title: title,
-                    href: api_v3_paths.send(path_method, params),
+                    href: api_v3_paths.send(path_method, params)
                   }
                 else
                   { href: nil, title: nil }

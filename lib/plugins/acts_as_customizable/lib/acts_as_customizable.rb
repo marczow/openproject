@@ -100,8 +100,9 @@ module Redmine
         def assign_new_values!(custom_field_id, existing_custom_values, new_values)
           new_values.flatten.zip(existing_custom_values).each do |new_value, custom_value|
             if custom_value.nil?
-              new_custom_value = custom_values
-                .build(customized: self, custom_field_id: custom_field_id, value: new_value)
+              new_custom_value = custom_values.build(
+                customized: self, custom_field_id: custom_field_id, value: new_value
+              )
 
               custom_field_values.push(new_custom_value)
             else
@@ -131,15 +132,18 @@ module Redmine
         end
 
         def custom_field_values
-          @custom_field_values ||= available_custom_fields.flat_map { |custom_field|
+          @custom_field_values ||= available_custom_fields.flat_map do |custom_field|
             existing_cvs = custom_values.select { |v| v.custom_field_id == custom_field.id }
 
             if existing_cvs.empty?
-              existing_cvs.push custom_values.build(customized: self, custom_field: custom_field, value: nil)
+              new_value = custom_values.build(
+                customized: self, custom_field: custom_field, value: nil
+              )
+              existing_cvs.push new_value
             end
 
             existing_cvs
-          }
+          end
         end
 
         def visible_custom_field_values
@@ -178,7 +182,7 @@ module Redmine
           new_values = {}
 
           available_custom_fields.each do |custom_field|
-            if custom_values.none? {|cv| cv.custom_field_id == custom_field.id }
+            if custom_values.none? { |cv| cv.custom_field_id == custom_field.id }
               new_values[custom_field.id] = custom_field.default_value
             end
           end
@@ -189,19 +193,23 @@ module Redmine
         def validate_custom_values
           set_default_values! if new_record?
 
-          custom_field_values.reject(&:marked_for_destruction?).select(&:invalid?).each do |cv|
-            cv.errors.each do |attribute, _|
-              # Relies on patch to AR::Errors in 10-patches.rb.
-              # We need to take the original symbol used to set the message to
-              # make the same symbol available on the customized object itself.
-              # This is important e.g. in the API v3 where the error messages are
-              # post processed.
-              name = cv.custom_field.accessor_name.to_sym
-              cv.errors.symbols_and_messages_for(attribute).each do |symbol, _, partial_message|
-                # Use the generated message by the custom field
-                # as it may contain specific parameters (e.g., :too_long requires :count)
-                errors.add(name, partial_message, error_symbol: symbol)
-              end
+          custom_field_values.reject(&:marked_for_destruction?).select(&:invalid?).each do |custom_value|
+            add_custom_value_errors! custom_value
+          end
+        end
+
+        def add_custom_value_errors!(custom_value)
+          custom_value.errors.each do |attribute, _|
+            # Relies on patch to AR::Errors in 10-patches.rb.
+            # We need to take the original symbol used to set the message to
+            # make the same symbol available on the customized object itself.
+            # This is important e.g. in the API v3 where the error messages are
+            # post processed.
+            name = custom_value.custom_field.accessor_name.to_sym
+            custom_value.errors.symbols_and_messages_for(attribute).each do |symbol, _, partial_message|
+              # Use the generated message by the custom field
+              # as it may contain specific parameters (e.g., :too_long requires :count)
+              errors.add(name, partial_message, error_symbol: symbol)
             end
           end
         end

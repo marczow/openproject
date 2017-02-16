@@ -204,7 +204,7 @@ module API
           @class.schema_with_allowed_link property_name(custom_field.id),
                                           type: 'User',
                                           writable: true,
-                                          name_source: -> (*) { custom_field.name },
+                                          name_source: ->(*) { custom_field.name },
                                           required: custom_field.is_required,
                                           href_callback: -> (*) {
                                             # for now we ASSUME that every customized that has a
@@ -216,9 +216,9 @@ module API
         def inject_list_schema(custom_field, customized)
           representer = StringObjects::StringObjectRepresenter
           type = custom_field.multi_value ? "[]StringObject" : "StringObject"
-          name_source = -> (*) { custom_field.name }
-          values_callback = -> (*) { customized.assignable_custom_field_values(custom_field) }
-          link_factory = -> (value) do
+          name_source = ->(*) { custom_field.name }
+          values_callback = ->(*) { customized.assignable_custom_field_values(custom_field) }
+          link_factory = ->(value) do
             # allow both single values and tuples for
             # custom titles
             {
@@ -242,7 +242,7 @@ module API
         def inject_basic_schema(custom_field)
           @class.schema property_name(custom_field.id),
                         type: TYPE_MAP[custom_field.field_format],
-                        name_source: -> (*) { custom_field.name },
+                        name_source: ->(*) { custom_field.name },
                         required: custom_field.is_required,
                         has_default: (not custom_field.default_value.nil?),
                         writable: true,
@@ -274,17 +274,18 @@ module API
         end
 
         def link_value_setter_for(custom_field, property, expected_namespace)
-          -> (link_object, *) {
+          ->(link_object, *) {
             values = Array([link_object].flatten).flat_map do |link|
               href = link['href']
-              value = if href
-                ::API::Utilities::ResourceLinkParser.parse_id(
-                  href,
-                  property: property,
-                  expected_version: '3',
-                  expected_namespace: expected_namespace
-                )
-              end
+              value =
+                if href
+                  ::API::Utilities::ResourceLinkParser.parse_id(
+                    href,
+                    property: property,
+                    expected_version: '3',
+                    expected_namespace: expected_namespace
+                  )
+                end
 
               [value].compact
             end
@@ -324,7 +325,7 @@ module API
         end
 
         def property_value_getter_for(custom_field)
-          -> (*) {
+          ->(*) {
             value = send custom_field.accessor_name
 
             if custom_field.field_format == 'text'
@@ -336,7 +337,7 @@ module API
         end
 
         def property_value_setter_for(custom_field)
-          -> (value, *) {
+          ->(value, *) {
             value = value['raw'] if custom_field.field_format == 'text'
             self.custom_field_values = { custom_field.id => value }
           }

@@ -27,6 +27,8 @@
 // ++
 
 import {EditField} from '../wp-edit-field/wp-edit-field.module';
+import {WorkPackageResourceInterface} from '../../api/api-v3/hal-resources/work-package-resource.service';
+import {CollectionResource} from '../../api/api-v3/hal-resources/collection-resource.service';
 
 export class MultiSelectEditField extends EditField {
   public options:any[];
@@ -38,7 +40,7 @@ export class MultiSelectEditField extends EditField {
 
   public currentValueInvalid:boolean = false;
 
-  constructor(workPackage, fieldName, schema) {
+  constructor(workPackage:WorkPackageResourceInterface, fieldName:string, schema:op.FieldSchema) {
     super(workPackage, fieldName, schema);
 
     const I18n:any = this.$injector.get('I18n');
@@ -52,7 +54,7 @@ export class MultiSelectEditField extends EditField {
     if (angular.isArray(this.schema.allowedValues)) {
       this.setValues(this.schema.allowedValues);
     } else if (this.schema.allowedValues) {
-      this.schema.allowedValues.$load().then((values) => {
+      this.schema.allowedValues.$load().then((values:CollectionResource) => {
         // The select options of the project shall be sorted
         if (values.elements[0]._type === 'Project') {
           this.setValues(values.elements, true);

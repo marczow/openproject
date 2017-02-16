@@ -36,9 +36,9 @@ export class StringObjectsDisplayField extends DisplayField {
       var cf = this.resource[this.name];
 
       if (cf.elements) {
-        return cf.elements.map(e => e.name);
+        return cf.elements.map((e:any) => e.name);
       } else if (cf.map) {
-        return cf.map(e => e.name);
+        return cf.map((e:any) => e.name);
       } else if (cf.name) {
         return [cf.name];
       } else {

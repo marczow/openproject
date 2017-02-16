@@ -445,10 +445,10 @@ export class WorkPackageResource extends HalResource {
         var isArray = (schema[key].type || '').startsWith('[]');
 
         if (isArray) {
-          var links = [];
+          var links:{href:string}[] = [];
           var elements = (this[key].forEach && this[key]) || this[key].elements;
 
-          elements.forEach(link => {
+          elements.forEach((link:{href:string}) => {
             if (link.href) {
               links.push({ href: link.href });
             }

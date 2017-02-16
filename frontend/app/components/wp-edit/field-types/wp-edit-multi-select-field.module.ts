@@ -82,11 +82,11 @@ export class MultiSelectEditField extends EditField {
   }
 
   private checkCurrentValueValidity() {
-    this.currentValueInvalid = (this.value &&
-                                !_.some(this.options, (option) => (option.href === this.value.href))
-                               ) ||
-                               (!this.value &&
-                                this.schema.required);
+    this.currentValueInvalid = !!(
+      (this.value && !_.some(this.options, (option) => (option.href === this.value.href)))
+      ||
+      (!this.value && this.schema.required)
+    );
   }
 
   private addEmptyOption() {

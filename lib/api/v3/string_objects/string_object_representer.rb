@@ -36,7 +36,7 @@ module API
       class StringObjectRepresenter < ::API::Decorators::Single
         # accepting current_user as argument to match common interface, we do not need it though
         def initialize(string, current_user: nil)
-          super(string, current_user: nil)
+          super(string, current_user: current_user)
         end
 
         link :self do

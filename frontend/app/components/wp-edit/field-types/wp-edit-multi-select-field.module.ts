@@ -31,7 +31,7 @@ import {EditField} from '../wp-edit-field/wp-edit-field.module';
 export class MultiSelectEditField extends EditField {
   public options:any[];
   public template:string = '/components/wp-edit/field-types/wp-edit-multi-select-field.directive.html';
-  public text;
+  public text:{requiredPlaceholder:string, placeholder:string, save:string, cancel:string};
 
   // Dependencies
   protected I18n:op.I18n = <op.I18n> MultiSelectEditField.$injector.get('I18n');

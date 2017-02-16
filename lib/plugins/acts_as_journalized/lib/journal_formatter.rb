@@ -110,7 +110,7 @@ module JournalFormatter
     formatter_type = data.class.to_s.to_sym
     formatter = lookup_formatter formatter_key, formatter_type
 
-    formatter_instances[formatter] unless formatter.nil?
+    formatter_instances(formatter_type)[formatter] unless formatter.nil?
   end
 
   def lookup_formatter(formatter_key, formatter_type)
@@ -119,7 +119,7 @@ module JournalFormatter
       .detect { |k| formatter_key.match(k) }
   end
 
-  def formatter_instances
+  def formatter_instances(formatter_type)
     @formatter_instances ||= Hash.new do |hash, key|
       f = JournalFormatter.formatters[JournalFormatter.registered_fields[formatter_type][key]]
       hash[key] = f.new(self)

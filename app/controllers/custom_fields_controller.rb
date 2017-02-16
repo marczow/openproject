@@ -94,9 +94,11 @@ class CustomFieldsController < ApplicationController
       num_deleted = CustomValue.where(custom_field_id: custom_option.custom_field_id, value: custom_option.id).delete_all
       custom_option.destroy!
 
-      flash[:notice] = "Option '#{custom_option.value}' and its #{num_deleted} occurrences were deleted."
+      flash[:notice] = I18n.t(
+        :notice_custom_options_deleted, option_value: custom_option.value, num_deleted: num_deleted
+      )
     else
-      flash[:error] = "Option does not exist."
+      flash[:error] = I18n.t(:error_custom_option_not_found)
     end
 
     redirect_to edit_custom_field_path(id: @custom_field.id)
